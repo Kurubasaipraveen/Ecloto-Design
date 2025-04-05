@@ -78,70 +78,79 @@ const ShoppingCart = () => {
         ))}
       </div>
 
-      {/* Cart Summary */}
-      <div className="cart-summary">
-        <h2>Cart Summary</h2>
-        <div className="RowTwo">
-          <p className="subtotal">Subtotal:</p>
-          <p className="total">₹{subtotal}</p>
-        </div>
+        
+<div className="cart-summary">
+  <h2>Cart Summary</h2>
+  <div className="RowTwo">
+    <p className="subtotal">Subtotal:</p>
+    <p className="total">₹{subtotal}</p>
+  </div>
 
-        <hr />
-        <div className="progress-card">
-          {remaining > 0 ? (
-            <p className="info-message">
-              Add ₹{remaining} more to get a FREE Wireless Mouse!
-            </p>
-          ) : (
-            <p className="success-message">
-              🎉 You've unlocked a FREE Wireless Mouse!
-            </p>
+  <hr />
+  <div className="progress-card">
+    {remaining > 0 ? (
+      <p className="info-message">
+        Add ₹{remaining} more to get a FREE Wireless Mouse!
+      </p>
+    ) : (
+      <p className="success-message">
+        🎉 You've unlocked a FREE Wireless Mouse!
+      </p>
+    )}
+    <div className="progress-container">
+      <div
+        className="progress-bar"
+        style={{ width: `${Math.min((subtotal / THRESHOLD) * 100, 100)}%` }}
+      ></div>
+    </div>
+  </div>
+  {cart.length === 0 && (
+    <div className="empty-cart">
+      <p>Your cart is empty 🛒</p>
+      <p>Add some items to see them here.</p>
+    </div>
+  )}
+
+  {cart.length > 0 && (
+    <ul className="cart-items">
+      {cart.map((item) => (
+        <li
+          key={item.id}
+          className={`cart-item ${item.id === FREE_GIFT.id ? "free-gift" : ""}`}
+        >
+          <span>
+            {item.name} <br />
+            ₹{item.price} × {item.quantity} = ₹
+            {item.price * item.quantity}
+          </span>
+
+          {item.id !== FREE_GIFT.id && (
+            <div className="quantity-controls">
+              <button
+                className="decrease-btn"
+                onClick={() => decreaseQuantity(item.id)}
+              >
+                -
+              </button>
+              <span>{item.quantity}</span>
+              <button
+                className="increase-btn"
+                onClick={() => increaseQuantity(item.id)}
+              >
+                +
+              </button>
+            </div>
           )}
-          <div className="progress-container">
-            <div
-              className="progress-bar"
-              style={{ width: `${Math.min((subtotal / THRESHOLD) * 100, 100)}%` }}
-            ></div>
-          </div>
-        </div>
 
-        <ul className="cart-items">
-          {cart.map((item) => (
-            <li
-              key={item.id}
-              className={`cart-item ${item.id === FREE_GIFT.id ? "free-gift" : ""}`}
-            >
-              <span>
-                {item.name} <br />
-                ₹{item.price} × {item.quantity} = ₹
-                {item.price * item.quantity}
-              </span>
+          {item.id === FREE_GIFT.id && (
+            <span className="gift-badge">FREE GIFT</span>
+          )}
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
 
-              {item.id !== FREE_GIFT.id && (
-                <div className="quantity-controls">
-                  <button
-                    className="decrease-btn"
-                    onClick={() => decreaseQuantity(item.id)}
-                  >
-                    -
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    className="increase-btn"
-                    onClick={() => increaseQuantity(item.id)}
-                  >
-                    +
-                  </button>
-                </div>
-              )}
-
-              {item.id === FREE_GIFT.id && (
-                <span className="gift-badge">FREE GIFT</span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 };
