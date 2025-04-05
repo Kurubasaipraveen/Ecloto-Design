@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Products.css";
-import PRODUCTS from "./data"; // Import PRODUCTS from data.js
-
-const FREE_GIFT = { id: 99, name: "Wireless Mouse", price: 0 };
-const THRESHOLD = 1000;
-
+import PRODUCTS from "./data";
 const ProductList = () => {
   const [cart, setCart] = useState([]);
   const [quantities, setQuantities] = useState({});
@@ -18,33 +14,17 @@ const ProductList = () => {
     }));
   };
 
-  const calculateSubtotal = (items) =>
-    items
-      .filter((item) => item.id !== FREE_GIFT.id)
-      .reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const addToCart = (product) => {
     const quantity = quantities[product.id] || 1;
-
     setCart((prevCart) => {
       let updatedCart = [...prevCart];
       const productIndex = updatedCart.findIndex((item) => item.id === product.id);
-
       if (productIndex !== -1) {
         updatedCart[productIndex].quantity += quantity;
       } else {
         updatedCart.push({ ...product, quantity });
       }
-      const subtotal = calculateSubtotal(updatedCart);
-
-      const hasGift = updatedCart.some((item) => item.id === FREE_GIFT.id);
-
-      if (subtotal >= THRESHOLD && !hasGift) {
-        updatedCart.push({ ...FREE_GIFT, quantity: 1 });
-      } else if (subtotal < THRESHOLD && hasGift) {
-        updatedCart = updatedCart.filter((item) => item.id !== FREE_GIFT.id);
-      }
-
       return updatedCart;
     });
   };
@@ -57,7 +37,7 @@ const ProductList = () => {
     <div className="product-list-container">
       <h1>E-Commerce Store</h1>
       <div className="cart-icon" onClick={RedirectCart}>
-        🛒 <span>Cart ({cart.filter((item) => item.id !== FREE_GIFT.id).length})</span>
+        🛒 <span>Cart </span>
       </div>
       <ul className="product-list">
         {PRODUCTS.map((product) => (
