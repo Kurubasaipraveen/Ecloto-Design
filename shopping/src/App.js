@@ -1,16 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ProductList from "./components/ProductList";
 import Cart from "./components/Cart";
 
 function App() {
-  const [cart, setCart] = useState({});
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<ProductList cart={cart} setCart={setCart} />} />
-        <Route path="/cart" element={<Cart cart={cart} setCart={setCart} />} />
+        <Route path="/" element={<ProductList />} />
+        <Route path="/cart" element={<Cart/>} />
       </Routes>
     </Router>
   );

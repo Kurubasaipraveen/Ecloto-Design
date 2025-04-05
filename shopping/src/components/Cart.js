@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import "../styles/cart.css";
 import products from "./data";
 
@@ -6,20 +7,9 @@ const FREE_GIFT = { id: 999, name: "Wireless Mouse", price: 0 };
 const THRESHOLD = 1000;
 
 const ShoppingCart = () => {
-  const [cart, setCart] = useState([]);
-
-  const addToCart = (product) => {
-    setCart((prevCart) => {
-      const exists = prevCart.find((item) => item.id === product.id);
-      if (exists) {
-        return prevCart.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      } else {
-        return [...prevCart, { ...product, quantity: 1 }];
-      }
-    });
-  };
+  const location = useLocation();
+  const initialCart = location.state?.cart || [];
+  const [cart, setCart] = useState(initialCart);
 
   const subtotal = cart
     .filter((item) => item.id !== FREE_GIFT.id)
@@ -28,20 +18,13 @@ const ShoppingCart = () => {
   const remaining = Math.max(0, THRESHOLD - subtotal);
 
   useEffect(() => {
-    setCart((prevCart) => {
-      const hasGift = prevCart.some((item) => item.id === FREE_GIFT.id);
-      const currentSubtotal = prevCart
-        .filter((item) => item.id !== FREE_GIFT.id)
-        .reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-      if (currentSubtotal >= THRESHOLD && !hasGift) {
-        return [...prevCart, { ...FREE_GIFT, quantity: 1 }];
-      } else if (currentSubtotal < THRESHOLD && hasGift) {
-        return prevCart.filter((item) => item.id !== FREE_GIFT.id);
-      }
-      return prevCart;
-    });
-  }, [subtotal]);
+    const hasGift = cart.some((item) => item.id === FREE_GIFT.id);
+    if (subtotal >= THRESHOLD && !hasGift) {
+      setCart((prevCart) => [...prevCart, { ...FREE_GIFT, quantity: 1 }]);
+    } else if (subtotal < THRESHOLD && hasGift) {
+      setCart((prevCart) => prevCart.filter((item) => item.id !== FREE_GIFT.id));
+    }
+  }, [subtotal]); // react only when subtotal changes
 
   const increaseQuantity = (id) => {
     setCart((prevCart) =>
@@ -59,6 +42,19 @@ const ShoppingCart = () => {
         )
         .filter((item) => item.quantity > 0)
     );
+  };
+
+  const addToCart = (product) => {
+    setCart((prevCart) => {
+      const existing = prevCart.find((item) => item.id === product.id);
+      if (existing) {
+        return prevCart.map((item) =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      } else {
+        return [...prevCart, { ...product, quantity: 1 }];
+      }
+    });
   };
 
   return (
