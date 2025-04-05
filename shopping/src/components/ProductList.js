@@ -31,17 +31,12 @@ const ProductList = () => {
       const productIndex = updatedCart.findIndex((item) => item.id === product.id);
 
       if (productIndex !== -1) {
-        // Update quantity if product already in cart
         updatedCart[productIndex].quantity += quantity;
       } else {
-        // Add new product
         updatedCart.push({ ...product, quantity });
       }
-
-      // Recalculate subtotal (excluding gift)
       const subtotal = calculateSubtotal(updatedCart);
 
-      // Free gift logic
       const hasGift = updatedCart.some((item) => item.id === FREE_GIFT.id);
 
       if (subtotal >= THRESHOLD && !hasGift) {
