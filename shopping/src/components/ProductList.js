@@ -20,29 +20,35 @@ const ProductList = () => {
 
   const addToCart = (product) => {
     const quantity = quantities[product.id] || 1;
-
+  
     setCart((prevCart) => {
-      let updatedCart = [...prevCart];
-      const existingItem = updatedCart.find((item) => item.id === product.id);
-
-      if (existingItem) {
-        existingItem.quantity += quantity;
-      } else {
+      let updatedCart = prevCart.map((item) =>
+        item.id === product.id
+          ? { ...item, quantity: item.quantity + quantity }
+          : item
+      );
+  
+      // If item doesn't exist, add it
+      if (!prevCart.some((item) => item.id === product.id)) {
         updatedCart.push({ ...product, quantity });
       }
-
-      const subtotal = updatedCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
+  
+      const subtotal = updatedCart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+  
+      // Free gift logic
       if (subtotal >= THRESHOLD && !updatedCart.some((item) => item.id === FREE_GIFT.id)) {
         updatedCart.push({ ...FREE_GIFT, quantity: 1 });
       } else if (subtotal < THRESHOLD) {
         updatedCart = updatedCart.filter((item) => item.id !== FREE_GIFT.id);
       }
-
+  
       return updatedCart;
     });
   };
-
+  
   const RedirectCart = () => {
     navigate('/cart', { state: { cart } }); 
   };
